@@ -11,6 +11,8 @@
 
   <param name="/use_sim_time" value="$(arg simulation)"/>
 
+  <param name="tf_prefix" value="$(arg prefix)" />
+
   <include file="$(find turtlebot_bringup)/launch/includes/robot.launch.xml">
     <arg name="base"      value="$(arg base)" />
     <arg name="stacks"    value="$(arg stacks)" />
@@ -18,7 +20,7 @@
   </include>
   
   <!-- let's move it specific version of mobile_base.launch.xml to include the prefix for kobuki_node tf> -->
-  <include file="$(find turtlebot_fleet_nav_launch)/launch/bringup/includes/mobile_base.launch.xml">
+  <include file="$(find turtlebot_fleet_bringup)/launch/includes/mobile_base.launch.xml">
     <arg name="base"        value="$(arg base)" />
     <arg name="serialport"  value="$(arg serialport)" />
     <arg name="prefix"      value="$(arg prefix)" />
