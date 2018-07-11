@@ -1,0 +1,13 @@
+<launch>
+
+  <arg name="prefix" default="robot_0" />
+  
+  <group ns="$(arg prefix)">
+   
+    <include file="$(find turtlebot_fleet_bringup)/launch/3dsensor.launch">
+      <arg name="prefix" value="$(arg prefix)"/>
+    </include>
+
+  </group>
+
+</launch>
