@@ -13,18 +13,21 @@
 
   <param name="tf_prefix" value="$(arg prefix)" />
 
+  <!-- default launch file from turtlebot_bringup-->
   <include file="$(find turtlebot_bringup)/launch/includes/robot.launch.xml">
     <arg name="base"      value="$(arg base)" />
     <arg name="stacks"    value="$(arg stacks)" />
     <arg name="3d_sensor" value="$(arg 3d_sensor)" />
   </include>
   
-  <!-- let's move it specific version of mobile_base.launch.xml to include the prefix for kobuki_node tf> -->
+  <!--  let's move it specific version of mobile_base.launch.xml to include the prefix needed
+        to set prefixed odom and base frames by kobuki_node.  -->
   <include file="$(find turtlebot_fleet_bringup)/launch/includes/mobile_base.launch.xml">
     <arg name="base"        value="$(arg base)" />
     <arg name="serialport"  value="$(arg serialport)" />
     <arg name="prefix"      value="$(arg prefix)" />
   </include>
+  <!-- default launch file from turtlebot_bringup-->
   <include unless="$(eval arg('battery') == 'None')" file="$(find turtlebot_bringup)/launch/includes/netbook.launch.xml">
     <arg name="battery" value="$(arg battery)" />
   </include>
