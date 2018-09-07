@@ -56,7 +56,7 @@ Modifications have been made to launch files to support a 'prefix' argument for 
 - On any machine with gui
   - An example rviz config can be found in *fontys_lets_move_it/turtlebot_fleet_nav_launch/rviz* it's configured for three robots using 'robot_x' naming.
   - A navigaton goal can be set with the *2D nav goal tool*.
-  - Change the 2D nav goal topic in tool properties to publish the goal to a different topic, eg */robot_0/move_base_simple/goal* to */robot_1/move_base_simple/goal* to use the tool for robot_1 instead of robot_0
+  - Change the 2D nav goal topic in tool properties to publish the goal to a different topic, eg */robot_0/move_base_simple/goal* to */robot_1/move_base_simple/goal* to use the 2D Nav tool for robot_1 instead of robot_0
   
 
 
