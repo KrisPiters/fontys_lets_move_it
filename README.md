@@ -24,11 +24,11 @@ Modifications have been made to launch files to support a 'prefix' argument for 
 - Git installed
 - All turtlebot packages installed
 - Clone this package to your machines' catkin workspace
-```bash
-roscd
-cd ../src
-git clone https://github.com/KrisPiters/fontys_lets_move_it.git
-```
+  ```bash
+  roscd
+  cd ../src
+  git clone https://github.com/KrisPiters/fontys_lets_move_it.git
+  ```
 
 ### Setup
 - Configure you network for use with multiple machines [1](http://wiki.ros.org/ROS/NetworkSetup) [2](http://wiki.ros.org/ROS/Tutorials/MultipleMachines) (fontyswpa and eduroam don't support hostname resolving so use ip addresses for *ROS_MASTER_URI*, *ROS_IP*, *ROS_HOSTNAME*)
@@ -39,19 +39,21 @@ git clone https://github.com/KrisPiters/fontys_lets_move_it.git
   - Update the network settings, making sure ROS_MASTER_URI is set to that machine's ip address.
   - Start a roscore
   - Start the map_server
-```bash
-rosrun map_server map_server location/of/yourmap.yaml
-```
+    ```bash
+    rosrun map_server map_server location/of/yourmap.yaml
+    ```
 - On a Turtlebot Machine
+  - Its easiest to physically place the robot in the same pose the robot was in when starting the mapping proces
   - Update the machine' s network settings, making sure ROS_MASTER_URI is set to match the ip address of the machine running the roscore.
   - Launch *minimal_prefix.launch* with the value of the prefix argument set to a unique name eg. robot_0, robot_1.
-```bash
-roslaunch turtlebot_fleet_bringup minimal_prefix.launch prefix:=robot_0
-```
+    ```bash
+    roslaunch turtlebot_fleet_bringup minimal_prefix.launch prefix:=robot_0
+    ```
   - Launch navigation and localization with the same prefix
-```bash
-roslaunch turtlebot_fleet_nav_launch amcl_move_base_prefix.launch prefix:=robot_0
-```
+    ```bash
+    roslaunch turtlebot_fleet_nav_launch amcl_move_base_prefix.launch prefix:=robot_0
+    ```
+
 
   
  
