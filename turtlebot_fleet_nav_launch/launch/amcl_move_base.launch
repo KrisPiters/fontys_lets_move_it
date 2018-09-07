@@ -6,8 +6,8 @@
   <arg name="3d_sensor" default="$(env TURTLEBOT_3D_SENSOR)"/>  <!-- r200, kinect, asus_xtion_pro -->
   <include file="$(find turtlebot_fleet_bringup)/launch/3dsensor.launch">
     <arg name="rgb_processing"      value="false" />
-    <arg name="depth_registration"  value="false" />
-    <arg name="depth_processing"    value="false" />
+    <arg name="depth_registration"  value="true" />
+    <arg name="depth_processing"    value="true" />
     <arg name="prefix"              value="$(arg prefix)"/>
     
     <!-- We must specify an absolute topic name because if not it will be prefixed by "$(arg camera)".
