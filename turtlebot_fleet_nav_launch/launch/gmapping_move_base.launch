@@ -19,7 +19,7 @@
     <arg name="scan_topic"  value="scan" />
     <arg name="base_frame"  value="$(arg prefix)/base_footprint"/>    
     <arg name="odom_frame"  value="$(arg prefix)/odom"/>
-    <arg name="map_frame"   value="map"/>
+    <arg name="map_frame"   value="$(arg prefix)/map"/>
   </include>
 
   <!--  Move base -->
