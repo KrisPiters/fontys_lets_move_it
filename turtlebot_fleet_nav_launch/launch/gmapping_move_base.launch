@@ -17,9 +17,10 @@
   <include file="$(arg custom_gmapping_launch_file)">
     <arg name="tf_prefix"   value="$(arg prefix)" />
     <arg name="scan_topic"  value="scan" />
-    <arg name="base_frame"  value="$(arg prefix)/base_footprint"/>    
-    <arg name="odom_frame"  value="$(arg prefix)/odom"/>
-    <arg name="map_frame"   value="$(arg prefix)/map"/>
+    <arg name="base_frame"  value="$(arg prefix)/base_footprint"  unless="$(eval arg('prefix') == '')"/>    
+    <arg name="odom_frame"  value="$(arg prefix)/odom"            unless="$(eval arg('prefix') == '')"/>
+    <arg name="map_frame"   value="map"                           if="$(eval arg('prefix') == '')"/>
+    <arg name="map_frame"   value="/$(arg prefix)/map"            unless="$(eval arg('prefix') == '')"/>
   </include>
 
   <!--  Move base -->
