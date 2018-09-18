@@ -1,0 +1,19 @@
+<launch>
+  <!--  A launchfile to launch gmapping and move_base in a namespace.
+        By using a namespace all topic, service, and parameter 
+        names will be prefixed (to be set with the "prefix" argument).
+        Additional the value of the prefix argument is used to set 
+        frame_id's for tf frames and message headers-->
+
+
+  <arg name="prefix" default="robot_0" />
+  
+  <group ns="$(arg prefix)">
+   
+    <include file="$(find turtlebot_fleet_nav_launch)/launch/gmapping_move_base.launch">
+      <arg name="prefix" value="$(arg prefix)"/>
+    </include>
+
+  </group>
+
+</launch>
