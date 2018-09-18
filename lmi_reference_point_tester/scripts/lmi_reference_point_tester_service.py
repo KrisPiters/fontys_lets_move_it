@@ -14,17 +14,7 @@ from std_msgs.msg import Header
 from copy import deepcopy
 
 class reference_point_core:
-  _map_frame_id = 'map'
-  _robot_frame_id = 'base_link'
-  _reference_point_frame_id = ""
-  _odom_topic_name = '/robot_0/odom'
-  _transformed_odom_topic_name = "~transformed_odom"
-  _transformed_robot_pose_topic_name = "~transformed_robot_pose"
-  _transformed_robot_pose_stamped_topic_name = "~transformed_robot_pose_stamped"
-  _ref_point_to_map_transform_translation = None
-  _ref_point_to_map_transform_rotation = None
-  
-
+ 
   def __init__(self,
       map_frame_id,
       robot_frame_id,
@@ -44,11 +34,14 @@ class reference_point_core:
     self._tf_broadcaster = tf.TransformBroadcaster()
     self._reference_point_frame_id = ""
     self._create_ref_point_service = rospy.Service('~create_ref_point', CreateRefPoint, self.create_ref_point_handler)
-    self._odom_sub = rospy.Subscriber(self._odom_topic_name, Odometry, self.odometry_callback)
-    self._transformed_odom_pub = rospy.Publisher(self._transformed_odom_topic_name, Odometry, queue_size= 100)
+    #self._odom_sub = rospy.Subscriber(self._odom_topic_name, Odometry, self.odometry_callback)
+    #self._transformed_odom_pub = rospy.Publisher(self._transformed_odom_topic_name, Odometry, queue_size= 100)
     self._transformed_robot_pose_pub = rospy.Publisher(self._transformed_robot_pose_topic_name, Pose, queue_size= 100)
     self._transformed_robot_pose_stamped_pub = rospy.Publisher(self._transformed_robot_pose_stamped_topic_name, PoseStamped, queue_size= 100)
     self._latest_robot_odom = Odometry()
+
+    self._ref_point_to_map_transform_translation = None
+    self._ref_point_to_map_transform_rotation = None
 
     rospy.loginfo("Reference Point Core initialized")
     rospy.loginfo("map_frame_id: %s", self._map_frame_id)
@@ -87,32 +80,6 @@ class reference_point_core:
 
   def odometry_callback(self, odom_data):
     self._latest_robot_odom = deepcopy(odom_data)
-
-    latest_odom = Odometry()
-    latest_odom = odom_data
-
-    
-
-    '''
-    self._latest_robot_odom.header = odom_data.header
-    self._latest_robot_odom.child_frame_id = odom_data.child_frame_id
-    
-    self._latest_robot_odom.pose.pose.position = \
-                  Point( odom_data.pose.pose.position.z, 
-                         odom_data.pose.pose.position.z,
-                         odom_data.pose.pose.position.z)
-
-    self._latest_robot_odom.pose.pose.orientation = \
-                  Quaternion( odom_data.pose.pose.orientation.x, 
-                              odom_data.pose.pose.orientation.y,
-                              odom_data.pose.pose.orientation.z,
-                              odom_data.pose.pose.orientation.w)
-    
-    self._latest_robot_odom.twist = odom_data.twist
-    '''
-    # Test
-    #self._transformed_odom_pub.publish(odom_data)
- 
           
   def send_reference_frame_transform(self):
 
@@ -123,6 +90,8 @@ class reference_point_core:
                                           self._map_frame_id, 
                                           self._reference_point_frame_id)
 
+  # Currently not working
+  '''
   def publish_transformed_odometry(self):
     
     if not self._transformed_odom_pub.get_num_connections > 0:
@@ -163,7 +132,8 @@ class reference_point_core:
         rospy.loginfo("Unable to transform odom pose to reference frame: No transform available.")
     else:
       rospy.loginfo("Unable to transform odom pose to reference frame: Reference frame_id is empty")
-  
+  '''
+
   def publish_transformed_robot_poses(self):
     pose = Pose()
     pose_stamped = PoseStamped()
