@@ -1,7 +1,7 @@
 <launch>
   
   <arg name="prefix" default=""/>
-  <arg name="common_map" default="true">
+  <arg name="common_map" default="true"/>
   
   <!-- 3D sensor -->
   <arg name="3d_sensor" default="$(env TURTLEBOT_3D_SENSOR)"/>  <!-- r200, kinect, asus_xtion_pro -->
