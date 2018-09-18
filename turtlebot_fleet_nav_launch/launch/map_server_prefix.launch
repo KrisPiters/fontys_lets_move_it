@@ -1,0 +1,21 @@
+<launch>
+  <!--  A launchfile to launch gmapping and move_base in a namespace.
+        By using a namespace all topic, service, and parameter 
+        names will be prefixed (to be set with the "prefix" argument).
+        Additional the value of the prefix argument is used to set 
+        frame_id's for tf frames and message headers-->
+
+
+  <arg name="prefix" default="robot_0"/>
+  <arg name="map_file"  default="$(find turtlebot_fleet_nav_launch)/map/fontys_room_0205_2018_07_13.yaml"/>
+  
+  <group ns="$(arg prefix)">
+   
+    <include file="$(find turtlebot_fleet_nav_launch)/launch/map_server.launch">
+      <arg name="frame_id" value="$(arg prefix)/map"/>
+      <arg name="map_file" value="$(arg map_file)"/>
+    </include>
+
+  </group>
+
+</launch>
