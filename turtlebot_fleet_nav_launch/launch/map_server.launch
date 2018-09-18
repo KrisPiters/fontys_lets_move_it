@@ -1,4 +1,8 @@
 <launch>
-  <arg name="map_file" default="$(find turtlebot_fleet_nav_launch)/map/fontys_room_0205_2018_07_13.yaml"/>
-  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+  <arg name="map_file"  default="$(find turtlebot_fleet_nav_launch)/map/fontys_room_0205_2018_07_13.yaml"/>
+  <arg name="frame_id"  default="map"/>
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" >
+    <param name="frame_id" value="$(arg frame_id)"/>
+  </node>
 </launch>
