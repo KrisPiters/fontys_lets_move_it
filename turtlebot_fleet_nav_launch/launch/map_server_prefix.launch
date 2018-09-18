@@ -1,5 +1,5 @@
 <launch>
-  <!--  A launchfile to launch gmapping and move_base in a namespace.
+  <!--  A launchfile to launch map_server in a namespace.
         By using a namespace all topic, service, and parameter 
         names will be prefixed (to be set with the "prefix" argument).
         Additional the value of the prefix argument is used to set 
