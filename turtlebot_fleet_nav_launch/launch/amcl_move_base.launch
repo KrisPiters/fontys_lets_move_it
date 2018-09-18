@@ -1,6 +1,7 @@
 <launch>
   
   <arg name="prefix" default=""/>
+  <arg name="common_map" default="true">
   
   <!-- 3D sensor -->
   <arg name="3d_sensor" default="$(env TURTLEBOT_3D_SENSOR)"/>  <!-- r200, kinect, asus_xtion_pro -->
@@ -25,13 +26,15 @@
     <arg name="initial_pose_y"  value="$(arg initial_pose_y)"/>
     <arg name="initial_pose_a"  value="$(arg initial_pose_a)"/>
      <!-- Using a single global  map (published on a root topic) for all (namespaced) amcl instances-->
-    <arg name="global_frame_id" value="/map"/>
+    <arg name="global_frame_id" value="/map"  if="$(arg common_map)"/>
+    <arg name="global_frame_id" value="$(arg prefix)/map"   unless="$(arg common_map)"/>
     <!-- using prefixing the frame_ids as amcl does not take into account name spaces -->
     <arg name="odom_frame_id"   value="$(arg prefix)/odom"/>
     <arg name="base_frame_id"   value="$(arg prefix)/base_footprint"/>
     <!-- using the /map topic as a source for the map as the map service '/static_map' is not available in each namespace indicated by the prefix-->
     <arg name="use_map_topic"   value="true"/> 
-    <arg name="map_topic"       value="/map"/>
+    <arg name="map_topic"       value="/map"  if="$(arg common_map)"/>
+    <arg name="map_topic"       value="map"   unless="$(arg common_map)"/>
   </include>
 
   <!--  Move base -->
@@ -43,7 +46,8 @@
     <arg name="custom_param_file" value="$(arg custom_param_file)"/>
     <arg name="odom_frame_id"     value="odom"/>
     <arg name="base_frame_id"     value="base_footprint"/>
-    <arg name="global_frame_id"   value="/map"/>
+    <arg name="global_frame_id"   value="/map"  if="$(arg common_map)"/>
+    <arg name="global_frame_id"   value="map"   unless="$(arg common_map)"/>
     <arg name="odom_topic"        value="odom" />
     <arg name="laser_topic"       value="scan" />
   </include>

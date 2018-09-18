@@ -7,11 +7,13 @@
 
 
   <arg name="prefix" default="robot_0" />
+  <arg name="common_map" default="true"/>
   
   <group ns="$(arg prefix)">
    
     <include file="$(find turtlebot_fleet_nav_launch)/launch/amcl_move_base.launch">
       <arg name="prefix" value="$(arg prefix)"/>
+      <arg name="common_map" value="$(arg common_map)"/>
     </include>
 
   </group>
