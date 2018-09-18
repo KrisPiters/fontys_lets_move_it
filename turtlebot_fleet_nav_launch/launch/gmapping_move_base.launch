@@ -9,9 +9,6 @@
     <arg name="depth_registration"  value="true" />
     <arg name="depth_processing"    value="true" />
     <arg name="prefix"              value="$(arg prefix)"/>
-    
-    <!-- We must specify an absolute topic name because if not it will be prefixed by "$(arg camera)".
-        Probably is a bug in the nodelet manager: https://github.com/ros/nodelet_core/issues/7 --> 
     <arg name="scan_topic" value="scan" />
   </include>
 
