@@ -1,9 +1,16 @@
 <launch>
-  <!--  A launchfile to launch a modified minimal.launch in a namespace.
+  <!--  A launchfile to launch amcl and move_base in a namespace.
         By using a namespace all topic, service, and parameter 
         names will be prefixed (to be set with the "prefix" argument).
         Additional the value of the prefix argument is used to set 
-        frame_id's for tf frames and message headers-->
+        frame_id's for tf frames and message headers
+        
+        common_map argument:
+        True: All namespaced amcl instances use a shared common map map and produce /map -> robot_x/odom transform
+        False: All namespaced amcl instances use individual maps (robot_x/map) and produce robot_x/map -> robot_x/odom transform
+
+        Launch map_server(s) separately.
+  -->
 
 
   <arg name="prefix" default="robot_0" />
