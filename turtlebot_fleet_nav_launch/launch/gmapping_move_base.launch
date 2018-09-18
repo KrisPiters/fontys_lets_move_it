@@ -1,0 +1,41 @@
+<launch>
+  
+  <arg name="prefix" default=""/>
+   
+  <!-- 3D sensor -->
+  <arg name="3d_sensor" default="$(env TURTLEBOT_3D_SENSOR)"/>  <!-- r200, kinect, asus_xtion_pro -->
+  <include file="$(find turtlebot_fleet_bringup)/launch/3dsensor.launch">
+    <arg name="rgb_processing"      value="false" />
+    <arg name="depth_registration"  value="true" />
+    <arg name="depth_processing"    value="true" />
+    <arg name="prefix"              value="$(arg prefix)"/>
+    
+    <!-- We must specify an absolute topic name because if not it will be prefixed by "$(arg camera)".
+        Probably is a bug in the nodelet manager: https://github.com/ros/nodelet_core/issues/7 --> 
+    <arg name="scan_topic" value="scan" />
+  </include>
+
+  <!-- gmapping -->
+  <arg name="custom_gmapping_launch_file" default="$(find turtlebot_fleet_nav_launch)/launch/includes/gmapping/$(arg 3d_sensor)_gmapping.launch.xml"/>
+  <include file="$(arg custom_gmapping_launch_file)">
+    <arg name="tf_prefix"   value="$(arg prefix)" />
+    <arg name="scan_topic"  value="scan" />
+    <arg name="base_frame"  value="$(arg prefix)/base_footprint"/>    
+    <arg name="odom_frame"  value="$(arg prefix)/odom"/>
+    <arg name="map_frame"   value="map"/>
+  </include>
+
+  <!--  Move base -->
+  <!--  No need to prefix the topic and frame_id names as move_node seems to get those from the node namespace -->
+  <arg name="custom_param_file" default="$(find turtlebot_navigation)/param/$(arg 3d_sensor)_costmap_params.yaml"/>
+  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml">
+    <arg name="custom_param_file" value="$(arg custom_param_file)"/>
+    <arg name="odom_frame_id"     value="odom"/>
+    <arg name="base_frame_id"     value="base_footprint"/>
+    <arg name="global_frame_id"   value="map" />
+    <arg name="odom_topic"        value="odom" />
+    <arg name="laser_topic"       value="scan" />
+  </include>
+
+</launch>
+
