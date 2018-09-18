@@ -1,0 +1,24 @@
+<launch>
+
+  <arg name="prefix"                                default="" />
+  <arg name="map_frame_id"                          default="map"/>
+  <arg name="robot_frame_id"                        default="base_link"/>
+  <arg name="transformed_odom_topic"                default="~transformed_odom"/>
+  <arg name="transformed_robot_pose_topic"          default="~ransformed_robot_pose"/>
+  <arg name="transformed_robot_pose_stamped_topic"  default="~transformed_robot_pose_stamped"/>
+  <arg name="spin_frequency"                        default="10"/>
+  
+  
+  <node pkg="lmi_reference_point_tester" name="ref_point_tester" type="lmi_reference_point_tester_service.py" output="screen">
+     <param name="map_frame_id"                         value="$(arg map_frame_id)" />
+     <param name="robot_frame_id"                       value="$(arg robot_frame_id)" />     
+     <param name="map_frame_id"                         value="$(arg prefix)/$(arg map_frame_id)" unless="$(eval arg('prefix') == '')"/>
+     <param name="robot_frame_id"                       value="$(arg prefix)/$(arg robot_frame_id)" unless="$(eval arg('prefix') == '')"/>
+     <param name="transformed_odom_topic"               value="$(arg transformed_odom_topic)" />
+     <param name="transformed_robot_pose_topic"         value="$(arg transformed_robot_pose_topic)" />
+     <param name="transformed_robot_pose_stamped_topic" value="$(arg transformed_robot_pose_stamped_topic)" />
+     <param name="spin_frequency"                       value="$(arg spin_frequency)" />            
+  </node>
+  
+
+</launch>

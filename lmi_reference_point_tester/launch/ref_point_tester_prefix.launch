@@ -1,0 +1,11 @@
+<launch>
+
+  <arg name="prefix" default="" />
+  
+  <group ns="$(arg prefix)">
+    <include file="$(find lmi_reference_point_tester)/launch/ref_point_tester.launch">
+      <arg name="prefix"      value="$(arg prefix)" />    
+    </include>
+  </group>
+
+</launch>
