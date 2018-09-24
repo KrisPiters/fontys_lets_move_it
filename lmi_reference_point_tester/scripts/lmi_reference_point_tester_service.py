@@ -55,7 +55,10 @@ class reference_point_core:
   def create_ref_point_handler(self, req):
     rospy.loginfo("[set_ref_point] Service received request to set reference point with name: %s"%(req.name))
     
-    current_time = rospy.Time.now()
+    current_time = rospy.Time(0) #rospy.Time.now()
+
+    latest_common_time = self._tf_listener.getLatestCommonTime(self._robot_frame_id, self._map_frame_id)
+    
 
     if (self._tf_listener.canTransform(self._robot_frame_id, self._map_frame_id, current_time)):
       
