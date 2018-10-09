@@ -31,7 +31,7 @@
   <run_depend>turtlebot_apps</run_depend>
   <run_depend>turtlebot_bringup</run_depend>
   <run_depend>turtlebot_teleop</run_depend>
-  <run_depend>turtlebot_viz</run_depend>
+  
   
   <!-- The export tag contains other, unspecified, tags -->
   <export>
