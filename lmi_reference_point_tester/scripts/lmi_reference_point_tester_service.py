@@ -187,9 +187,9 @@ if __name__ == "__main__":
   transformed_odom_topic_name = rospy.get_param('~transformed_odom_topic','~transformed_odom')
   transformed_robot_pose_topic_name = rospy.get_param('~transformed_robot_pose_topic','~transformed_robot_pose')
   transformed_robot_pose_stamped_topic_name = rospy.get_param('~transformed_robot_pose_stamped_topic','~transformed_robot_pose_stamped')
-  spin_frequency = rospy.get_param('~spin_frequency', 10)
+  rate = rospy.get_param('~rate', 10)
 
-  rate = rospy.Rate(spin_frequency)
+  rate = rospy.Rate(rate)
   
   reference_point_core_ = reference_point_core(
     map_frame_id,
