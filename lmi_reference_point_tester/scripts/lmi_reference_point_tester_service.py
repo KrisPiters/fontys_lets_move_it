@@ -34,8 +34,8 @@ class reference_point_core:
     self._tf_broadcaster = tf.TransformBroadcaster()
     self._reference_point_frame_id = ""
     self._create_ref_point_service = rospy.Service('~create_ref_point', CreateRefPoint, self.create_ref_point_handler)
-    #self._odom_sub = rospy.Subscriber(self._odom_topic_name, Odometry, self.odometry_callback)
-    #self._transformed_odom_pub = rospy.Publisher(self._transformed_odom_topic_name, Odometry, queue_size= 100)
+    self._odom_sub = rospy.Subscriber(self._odom_topic_name, Odometry, self.odometry_callback)
+    self._transformed_odom_pub = rospy.Publisher(self._transformed_odom_topic_name, Odometry, queue_size= 100)
     self._transformed_robot_pose_pub = rospy.Publisher(self._transformed_robot_pose_topic_name, Pose, queue_size= 100)
     self._transformed_robot_pose_stamped_pub = rospy.Publisher(self._transformed_robot_pose_stamped_topic_name, PoseStamped, queue_size= 100)
     self._latest_robot_odom = Odometry()
@@ -57,9 +57,6 @@ class reference_point_core:
     
     current_time = rospy.Time(0) #rospy.Time.now()
 
-    latest_common_time = self._tf_listener.getLatestCommonTime(self._robot_frame_id, self._map_frame_id)
-    
-
     if (self._tf_listener.canTransform(self._robot_frame_id, self._map_frame_id, current_time)):
       
       (self._ref_point_to_map_transform_translation, self._ref_point_to_map_transform_rotation) = \
@@ -71,18 +68,54 @@ class reference_point_core:
       
       self._reference_point_frame_id = req.name
       
-      self._tf_broadcaster.sendTransform( self._ref_point_to_map_transform_translation, 
-                                          self._ref_point_to_map_transform_rotation, 
-                                          current_time, 
-                                          self._map_frame_id, 
-                                          self._reference_point_frame_id)
+      self.send_reference_frame_transform()
+
       return CreateRefPointResponse(1)
 
     rospy.loginfo("Unable to set reference point; No transform found from %s to %s",self._robot_frame_id, self._map_frame_id)
     return CreateRefPointResponse(0)
 
   def odometry_callback(self, odom_data):
-    self._latest_robot_odom = deepcopy(odom_data)
+    
+    ref_id = self._reference_point_frame_id
+    rob_id = self._robot_frame_id
+
+    # using Time(0) because for unkown reasons using the stamp from odom_data fails
+    time = rospy.Time(0)
+
+    #rospy.loginfo("odom time: %s rostime.now: %s", odom_data.header.stamp, rospy.Time.now())
+
+    if (ref_id is not ""):
+      if (self._tf_listener.canTransform(ref_id, rob_id, time)):#odom_data.header.stamp)):
+        
+        # Create posestamped from odom pose
+        ps = PoseStamped()
+        ps.header.frame_id = rob_id
+        ps.header.stamp = time #odom_data.header.stamp
+        ps.header.seq = odom_data.header.seq
+
+        # Transform the posestamped to reference_frame
+        tfp = self._tf_listener.transformPose(ref_id, ps)
+
+        # Create odom message with transformed pose
+        tf_odom = Odometry()
+        tf_odom.header = odom_data.header
+        tf_odom.header.frame_id = ref_id
+        tf_odom.child_frame_id = rob_id
+        
+        tf_odom.pose = odom_data.pose
+        
+        # replace original pose with transformed pose form pose stamped
+        tf_odom.pose.pose = tfp.pose
+        tf_odom.twist = odom_data.twist
+
+        # publish transformed data
+        self._transformed_odom_pub.publish(tf_odom)
+      
+      else:
+        rospy.loginfo("Unable to transform odometry: no transform from %s to %s at time %s;", self._reference_point_frame_id, self._robot_frame_id, odom_data.header.stamp)
+
+
           
   def send_reference_frame_transform(self):
 
@@ -99,14 +132,11 @@ class reference_point_core:
     
     if not self._transformed_odom_pub.get_num_connections > 0:
       return
-    
-
+  
     if (self._reference_point_frame_id is not "" and self._latest_robot_odom is not None):
      
       if (self._tf_listener.canTransform(self._reference_point_frame_id, self._robot_frame_id, rospy.Time.now())):
         try:
-             
-
 
           transformed_odom_ = Odometry( header = self._latest_robot_odom.header,
                                         child_frame_id = self._latest_robot_odom.child_frame_id,
@@ -169,9 +199,6 @@ class reference_point_core:
         rospy.loginfo("Unable to transform odom pose to reference frame: tf exception.")
         pass
 
-     
-
-
   def loop(self):
     self.send_reference_frame_transform()
     #self.publish_transformed_odometry()
@@ -187,9 +214,8 @@ if __name__ == "__main__":
   transformed_odom_topic_name = rospy.get_param('~transformed_odom_topic','~transformed_odom')
   transformed_robot_pose_topic_name = rospy.get_param('~transformed_robot_pose_topic','~transformed_robot_pose')
   transformed_robot_pose_stamped_topic_name = rospy.get_param('~transformed_robot_pose_stamped_topic','~transformed_robot_pose_stamped')
-  rate = rospy.get_param('~rate', 10)
-
-  rate = rospy.Rate(rate)
+  
+  rate = rospy.Rate(rospy.get_param('~rate', 10))
   
   reference_point_core_ = reference_point_core(
     map_frame_id,
