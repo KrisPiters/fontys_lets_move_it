@@ -6,7 +6,7 @@
   <arg name="transformed_odom_topic"                default="~transformed_odom"/>
   <arg name="transformed_robot_pose_topic"          default="~transformed_robot_pose"/>
   <arg name="transformed_robot_pose_stamped_topic"  default="~transformed_robot_pose_stamped"/>
-  <arg name="rate"                                  default="10"/>
+  <arg name="rate"                                  default="100"/>
   
   
   <node pkg="lmi_reference_point_tester" name="ref_point_tester" type="lmi_reference_point_tester_service.py" output="screen">
