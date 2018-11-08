@@ -33,7 +33,7 @@ class reference_point_core:
     self._tf_listener = tf.TransformListener()
     self._tf_broadcaster = tf.TransformBroadcaster()
     self._reference_point_frame_id = ""
-    self._reference_frame_creation_service = rospy.Service('~create_reference_frame', CreateRefFrame, self.reference_frame_creation_service_handler)
+    self._reference_frame_creation_service = rospy.Service('~set_reference_point', SetRefPoint, self.reference_frame_creation_service_handler)
     self._odom_sub = rospy.Subscriber(self._odom_topic_name, Odometry, self.odometry_callback)
     self._transformed_odom_pub = rospy.Publisher(self._transformed_odom_topic_name, Odometry, queue_size= 100)
     self._transformed_robot_pose_pub = rospy.Publisher(self._transformed_robot_pose_topic_name, Pose, queue_size= 100)
@@ -76,10 +76,10 @@ class reference_point_core:
       
       self.send_reference_frame_transform()
 
-      return CreateRefPointResponse(1)
+      return SetRefPointResponse(1)
 
     rospy.loginfo("Unable to set reference point; No transform found from %s to %s",self._robot_frame_id, self._map_frame_id)
-    return CreateRefPointResponse(0)
+    return SetRefPointResponse(0)
 
   # Call back for the odometry topic
   # Takes in the odometry data of the robot
