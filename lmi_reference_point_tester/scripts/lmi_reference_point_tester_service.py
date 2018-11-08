@@ -82,8 +82,8 @@ class reference_point_core:
 
     # using Time(0) because for unkown reasons using the stamp from odom_data fails
     # Time(0) represents the latest available transform
-    # fixed by using a wait for transform
-    time = odom_data.header.stamp#rospy.Time(0)
+    
+    time = rospy.Time(0) #odom_data.header.stamp
     
 
     #rospy.loginfo("odom time: %s rostime.now: %s", odom_data.header.stamp, rospy.Time.now())
@@ -92,13 +92,13 @@ class reference_point_core:
 
     if (ref_id is not ""):
       try:
-        self._tf_listener.waitForTransform(ref_id, rob_id,odom_data.header.stamp, rospy.Duration(0.5))
-        if (self._tf_listener.canTransform(ref_id, rob_id, time)):#odom_data.header.stamp)):
+        self._tf_listener.waitForTransform(ref_id, rob_id, time, rospy.Duration(0.5))
+        if (self._tf_listener.canTransform(ref_id, rob_id, time)):
           
           # Create posestamped from odom pose
           ps = PoseStamped()
           ps.header.frame_id = rob_id
-          ps.header.stamp = time #odom_data.header.stamp
+          ps.header.stamp = time
           ps.header.seq = odom_data.header.seq
 
           # Transform the posestamped to reference_frame
@@ -136,48 +136,7 @@ class reference_point_core:
                                           rospy.Time.now(), 
                                           self._map_frame_id, 
                                           self._reference_point_frame_id)
-
-  # Currently not working
-  '''
-  def publish_transformed_odometry(self):
-    
-    if not self._transformed_odom_pub.get_num_connections > 0:
-      return
-  
-    if (self._reference_point_frame_id is not "" and self._latest_robot_odom is not None):
-     
-      if (self._tf_listener.canTransform(self._reference_point_frame_id, self._robot_frame_id, rospy.Time.now())):
-        try:
-
-          transformed_odom_ = Odometry( header = self._latest_robot_odom.header,
-                                        child_frame_id = self._latest_robot_odom.child_frame_id,
-                                        pose = self._latest_robot_odom.pose,
-                                        twist = self._latest_robot_odom.twist)
-
-          (transformed_odom_.pose.pose.position, transformed_odom_.pose.pose.orientation) = \
-            self._tf_listener.lookupTransform( self._reference_point_frame_id, 
-                                               self._robot_frame_id,  
-                                               rospy.Time.now())
-          
-          #transformed_odom_.pose.pose = self._tf_listener.transformPose(  self._reference_point_frame_id,
-          #                                                                PoseStamped(header = odom_data.header,
-          #                                                                            pose = odom_data.pose.pose))
-          transformed_odom_.header.frame_id = self._reference_point_frame_id
-          transformed_odom_.header.stamp = rospy.Time.now()
-          rospy.loginfo("Publishing transformed odometry.")
-          #self._transformed_odom_pub.publish(transformed_odom_)
-          self._transformed_odom_pub.publish(self._latest_robot_odom)
-          rospy.loginfo("Published transformed odometry. rostime: %s", rospy.Time.now())
-          
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-          rospy.loginfo("Unable to transform odom pose to reference frame: tf exception.")
-          pass
-      else:
-        rospy.loginfo("Unable to transform odom pose to reference frame: No transform available.")
-    else:
-      rospy.loginfo("Unable to transform odom pose to reference frame: Reference frame_id is empty")
-  '''
-
+ 
   def publish_transformed_robot_poses(self):
     pose = Pose()
     pose_stamped = PoseStamped()
@@ -212,7 +171,6 @@ class reference_point_core:
 
   def loop(self):
     self.send_reference_frame_transform()
-    #self.publish_transformed_odometry()
     self.publish_transformed_robot_poses()
   
 
