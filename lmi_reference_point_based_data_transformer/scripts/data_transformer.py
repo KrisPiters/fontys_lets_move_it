@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import tf
-from lmi_reference_point_tester.srv import *
+from lmi_reference_point_based_data_transformer.srv import *
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped, \
                               Pose, \

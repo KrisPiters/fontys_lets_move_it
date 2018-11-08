@@ -9,7 +9,7 @@
   <arg name="rate"                                  default="10"/>
   
   
-  <node pkg="lmi_reference_point_tester" name="reference_point_provider" type="lmi_reference_point_tester_service.py" output="screen">
+  <node pkg="lmi_reference_point_based_data_transformer" name="reference_point_data_transformer" type="data_transformer.py" output="screen">
      <param name="map_frame_id"                         value="$(arg map_frame_id)" />
      <param name="robot_frame_id"                       value="$(arg robot_frame_id)" />     
      <param name="map_frame_id"                         value="$(arg prefix)/$(arg map_frame_id)" unless="$(eval arg('prefix') == '')"/>

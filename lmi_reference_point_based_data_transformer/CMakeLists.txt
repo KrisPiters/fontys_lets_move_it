@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(lmi_reference_point_tester)
+project(lmi_reference_point_based_data_transformer)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -107,7 +107,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES lmi_reference_point_tester
+#  LIBRARIES lmi_reference_point_based_data_transformer
 #  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf
 #  DEPENDS system_lib
 )
@@ -125,7 +125,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/lmi_reference_point_tester.cpp
+#   src/${PROJECT_NAME}/lmi_reference_point_based_data_transformer.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -136,7 +136,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/lmi_reference_point_tester_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/lmi_reference_point_based_data_transformer.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -193,7 +193,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_lmi_reference_point_tester.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_lmi_reference_point_based_data_transformer.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
