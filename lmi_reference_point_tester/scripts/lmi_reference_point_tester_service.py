@@ -33,7 +33,7 @@ class reference_point_core:
     self._tf_listener = tf.TransformListener()
     self._tf_broadcaster = tf.TransformBroadcaster()
     self._reference_point_frame_id = ""
-    self._create_ref_point_service = rospy.Service('~create_ref_point', CreateRefPoint, self.create_ref_point_handler)
+    self._reference_frame_creation_service = rospy.Service('~create_reference_frame', CreateRefFrame, self.reference_frame_creation_service_handler)
     self._odom_sub = rospy.Subscriber(self._odom_topic_name, Odometry, self.odometry_callback)
     self._transformed_odom_pub = rospy.Publisher(self._transformed_odom_topic_name, Odometry, queue_size= 100)
     self._transformed_robot_pose_pub = rospy.Publisher(self._transformed_robot_pose_topic_name, Pose, queue_size= 100)
@@ -50,9 +50,15 @@ class reference_point_core:
     rospy.loginfo("transformed_odom_topic_out: %s", transformed_odom_topic_name)
     rospy.loginfo("transformed_robot_pose_topic_out: %s", self._transformed_robot_pose_topic_name)
     rospy.loginfo("transformed_robot_pose_stamped_topic_out: %s", self._transformed_robot_pose_stamped_topic_name)
-
   
-  def create_ref_point_handler(self, req):
+  # Handler for the service call
+  # Prerequisites; For the call to succeed a transform from 'self._robot_frame_id' to 'self._map_frame_id'
+  # must be available.
+  # In: req; a string which holds the name for the reference frame.
+  # Returns:  1: Succeeded to save the transform robot_frame to map as reference_frame to map
+  #           0: Failed to save the transform robot_frame to map as reference_frame to map
+  # NOTE could be expanded to support multiple reference frames.
+  def reference_frame_creation_service_handler(self, req):
     rospy.loginfo("[set_ref_point] Service received request to set reference point with name: %s"%(req.name))
     
     current_time = rospy.Time(0) #rospy.Time.now()
@@ -75,6 +81,9 @@ class reference_point_core:
     rospy.loginfo("Unable to set reference point; No transform found from %s to %s",self._robot_frame_id, self._map_frame_id)
     return CreateRefPointResponse(0)
 
+  # Call back for the odometry topic
+  # Takes in the odometry data of the robot
+  # Transforms and republishes transformed odometry data
   def odometry_callback(self, odom_data):
     
     ref_id = self._reference_point_frame_id
@@ -119,7 +128,6 @@ class reference_point_core:
           # publish transformed data
           self._transformed_odom_pub.publish(tf_odom)
       
-
         else:
           rospy.loginfo("Unable to transform odometry: no transform from %s to %s at time %s;", self._reference_point_frame_id, self._robot_frame_id, odom_data.header.stamp)
       except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
@@ -127,7 +135,7 @@ class reference_point_core:
         pass
 
 
-          
+  # Broadcasts the transform reference_frame to map to tf
   def send_reference_frame_transform(self):
 
     if (self._reference_point_frame_id is not ""):
@@ -137,6 +145,12 @@ class reference_point_core:
                                           self._map_frame_id, 
                                           self._reference_point_frame_id)
  
+  # Publishes the pose of the robot represented by 'self._robot_frame_id'
+  # As a pose msg and a posestamped msg
+  # The transform reference_point_frame to robot_frame is used to transform
+  # the pose of the robot to the reference point frame, ie. the position and
+  # orientation contained in the pose messages represent the robot in the 
+  # reference point frame. 
   def publish_transformed_robot_poses(self):
     pose = Pose()
     pose_stamped = PoseStamped()
@@ -168,7 +182,8 @@ class reference_point_core:
       except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
         rospy.loginfo("Unable to transform odom pose to reference frame: tf exception.")
         pass
-
+  
+  # Loop called from 'main' at preset rate to publish the transforms and poses
   def loop(self):
     self.send_reference_frame_transform()
     self.publish_transformed_robot_poses()
