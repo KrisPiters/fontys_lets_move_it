@@ -224,4 +224,5 @@ if __name__ == "__main__":
     reference_point_core_.loop()
     rate.sleep()
 
+rospy.signal_shutdown("Shutting Down")
 
