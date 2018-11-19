@@ -55,11 +55,7 @@
   <!--<build_export_depend>turtlebot_navigation</build_export_depend>-->
   <exec_depend>turtlebot_bringup</exec_depend>
   <exec_depend>turtlebot_navigation</exec_depend>
-  <run_depend>turtlebot_bringup</run_depend>
-  <run_depend>turtlebot_navigation</run_depend>
-
-
-
+ 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
