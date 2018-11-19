@@ -52,6 +52,14 @@ class reference_point_core:
     rospy.loginfo("transformed_robot_pose_topic_out: %s", self._transformed_robot_pose_topic_name)
     rospy.loginfo("transformed_robot_pose_stamped_topic_out: %s", self._transformed_robot_pose_stamped_topic_name)
   
+  # Deconstructor unregistering all topics and shutting down service
+  def __del__(self):
+    self._odom_sub.unregister()
+    self._transformed_odom_pub.unregister()
+    self._transformed_robot_pose_pub.unregister()
+    self._transformed_robot_pose_stamped_pub.unregister()
+    self._reference_frame_creation_service.shutdown('Node shutting down')
+
   # Handler for the service call
   # Prerequisites; For the call to succeed a transform from 'self._robot_frame_id' to 'self._map_frame_id'
   # must be available.
@@ -215,4 +223,5 @@ if __name__ == "__main__":
   while not rospy.is_shutdown():
     reference_point_core_.loop()
     rate.sleep()
-    
+
+
