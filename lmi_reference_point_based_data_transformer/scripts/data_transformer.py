@@ -103,45 +103,36 @@ class reference_point_core:
     
     time = rospy.Time(0) #odom_data.header.stamp
     
-
-    #rospy.loginfo("odom time: %s rostime.now: %s", odom_data.header.stamp, rospy.Time.now())
-
-    #self._tf_listener.waitForTransform(ref_id, rob_id,odom_data.header.stamp, rospy.Duration(0.5))
-
     if (ref_id is not ""):
-      try:
-        self._tf_listener.waitForTransform(ref_id, rob_id, time, rospy.Duration(0.5))
-        if (self._tf_listener.canTransform(ref_id, rob_id, time)):
-          
-          # Create posestamped from odom pose
-          ps = PoseStamped()
-          ps.header.frame_id = rob_id
-          ps.header.stamp = time
-          ps.header.seq = odom_data.header.seq
+      if (self._tf_listener.canTransform(ref_id, rob_id, time)):
+        
+        # Create posestamped from odom pose
+        ps = PoseStamped()
+        ps.header.frame_id = rob_id
+        ps.header.stamp = time
+        ps.header.seq = odom_data.header.seq
 
-          # Transform the posestamped to reference_frame
-          tfp = self._tf_listener.transformPose(ref_id, ps)
+        # Transform the posestamped to reference_frame
+        tfp = self._tf_listener.transformPose(ref_id, ps)
 
-          # Create odom message with transformed pose
-          tf_odom = Odometry()
-          tf_odom.header = odom_data.header
-          tf_odom.header.frame_id = ref_id
-          tf_odom.child_frame_id = rob_id
-          
-          tf_odom.pose = odom_data.pose
-          
-          # replace original pose with transformed pose form pose stamped
-          tf_odom.pose.pose = tfp.pose
-          tf_odom.twist = odom_data.twist
+        # Create odom message with transformed pose
+        tf_odom = Odometry()
+        tf_odom.header = odom_data.header
+        tf_odom.header.frame_id = ref_id
+        tf_odom.child_frame_id = rob_id
+        
+        tf_odom.pose = odom_data.pose
+        
+        # replace original pose with transformed pose form pose stamped
+        tf_odom.pose.pose = tfp.pose
+        tf_odom.twist = odom_data.twist
 
-          # publish transformed data
-          self._transformed_odom_pub.publish(tf_odom)
-      
-        else:
-          rospy.loginfo("Unable to transform odometry: no transform from %s to %s at time %s;", self._reference_point_frame_id, self._robot_frame_id, odom_data.header.stamp)
-      except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-        rospy.logerr("Waiting for transform failed after 0.5 seconds; ")
-        pass
+        # publish transformed data
+        self._transformed_odom_pub.publish(tf_odom)
+    
+      else:
+        rospy.loginfo("Unable to transform odometry: no transform from %s to %s at time %s;", self._reference_point_frame_id, self._robot_frame_id, odom_data.header.stamp)
+    
 
 
   # Broadcasts the transform reference_frame to map to tf
